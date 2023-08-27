@@ -1,0 +1,448 @@
+CREATE TABLE agent_imobiliar(
+	ID_Agent int NOT NULL PRIMARY KEY, 
+	Nume VARCHAR2(255) ,
+	Telefon VARCHAR2(255));
+
+CREATE SEQUENCE agent_imobiliar_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER agent_imobiliar_seq_tr
+ BEFORE INSERT ON agent_imobiliar FOR EACH ROW
+ WHEN (NEW.ID_Agent IS NULL)
+BEGIN
+ SELECT agent_imobiliar_seq.NEXTVAL INTO :NEW.ID_Agent FROM DUAL;
+END;
+/
+
+CREATE TABLE apartament (
+	ID_Apartament int NOT NULL PRIMARY KEY,
+	ID_Agent int,
+	FOREIGN KEY(ID_Agent) REFERENCES Agent_Imobiliar(ID_Agent),
+	Situatie_Apartament VARCHAR2(255),
+	Suprafata NUMBER(10),
+	Cost_Chirie NUMBER(10));
+
+CREATE SEQUENCE apartament_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER apartament_seq_tr
+ BEFORE INSERT ON apartament FOR EACH ROW
+ WHEN (NEW.ID_Apartament IS NULL)
+BEGIN
+ SELECT apartament_seq.NEXTVAL INTO :NEW.ID_Apartament FROM DUAL;
+END;
+/
+
+CREATE TABLE utilitate (
+	ID_Utilitate int NOT NULL PRIMARY KEY,
+	ID_Apartament number(10) ,
+	FOREIGN KEY(ID_Apartament) REFERENCES Apartament(ID_Apartament),
+	Tip_Utilitate VARCHAR2(255));
+
+CREATE SEQUENCE utilitate_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER utilitate_seq_tr
+ BEFORE INSERT ON utilitate FOR EACH ROW
+ WHEN (NEW.ID_Utilitate IS NULL)
+BEGIN
+ SELECT utilitate_seq.NEXTVAL INTO :NEW.ID_Utilitate FROM DUAL;
+END;
+/
+
+CREATE TABLE camera (
+	ID_Camera int NOT NULL PRIMARY KEY,
+	ID_Apartament NUMBER(10),
+	FOREIGN KEY(ID_Apartament) REFERENCES Apartament(ID_Apartament),
+	Tip_Camera VARCHAR2(255),
+	Nr_Geamuri NUMBER(10),
+	Tip_Pardoseala VARCHAR2(255));
+
+CREATE SEQUENCE camera_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER camera_seq_tr
+ BEFORE INSERT ON camera FOR EACH ROW
+ WHEN (NEW.ID_Camera IS NULL)
+BEGIN
+ SELECT camera_seq.NEXTVAL INTO :NEW.ID_Camera FROM DUAL;
+END;
+/
+
+CREATE TABLE mobila (
+	ID_Mobila int NOT NULL PRIMARY KEY,
+	ID_Camera NUMBER(10),
+	FOREIGN KEY(ID_Camera) REFERENCES Camera(ID_Camera),
+	Tip_Mobilier VARCHAR2(255) ,
+	Producator VARCHAR2(255));
+
+CREATE SEQUENCE mobila_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER mobila_seq_tr
+ BEFORE INSERT ON mobila FOR EACH ROW
+ WHEN (NEW.ID_Mobila IS NULL)
+BEGIN
+ SELECT mobila_seq.NEXTVAL INTO :NEW.ID_Mobila FROM DUAL;
+END;
+/
+
+CREATE TABLE chirias (
+	ID_Chirias int NOT NULL PRIMARY KEY,
+	ID_Apartament NUMBER(10) ,
+	FOREIGN KEY(ID_Apartament) REFERENCES Apartament(ID_Apartament),
+	Nume VARCHAR2(255),
+	Nr_Tel VARCHAR2(255));
+
+CREATE SEQUENCE chirias_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER chirias_seq_tr
+ BEFORE INSERT ON chirias FOR EACH ROW
+ WHEN (NEW.ID_Chirias IS NULL)
+BEGIN
+ SELECT chirias_seq.NEXTVAL INTO :NEW.ID_Chirias FROM DUAL;
+END;
+/
+
+CREATE TABLE istoric_chirie (
+	ID_Chirie int NOT NULL PRIMARY KEY,
+	ID_Apartament NUMBER(10) ,
+	FOREIGN KEY(ID_Apartament) REFERENCES Apartament(ID_Apartament),
+	Pret_Anterior NUMBER(10));
+
+CREATE SEQUENCE istoric_chirie_seq START WITH 1 INCREMENT BY 1;
+
+CREATE OR REPLACE TRIGGER istoric_chirie_seq_tr
+ BEFORE INSERT ON istoric_chirie FOR EACH ROW
+ WHEN (NEW.ID_Chirie IS NULL)
+BEGIN
+ SELECT istoric_chirie_seq.NEXTVAL INTO :NEW.ID_Chirie FROM DUAL;
+END;
+/
+
+INSERT INTO AGENT_IMOBILIAR(Nume, Telefon)
+VALUES ('Ciobanu Aurel', '0720111001');
+INSERT INTO AGENT_IMOBILIAR(NUME, TELEFON)
+VALUES ('Popescu Florian', '0720223101');	
+INSERT INTO Agent_Imobiliar(Nume, Telefon)
+VALUES ('Florescu Marian', '0723547212');
+INSERT INTO Agent_Imobiliar(Nume, Telefon)
+VALUES ('Bonciu Florin', '0754354211');
+INSERT INTO Agent_Imobiliar(Nume, Telefon)
+VALUES ('Manea Andrei', '0765432101');
+INSERT INTO Agent_Imobiliar(Nume, Telefon)
+VALUES ('Baltag Sorin', '0720185765');
+SELECT * FROM Agent_Imobiliar;
+
+INSERT INTO Apartament(ID_Agent,Situatie_Apartament, Suprafata, Cost_Chirie)
+ SELECT 2,'Inchiriat',35,800 FROM dual
+UNION ALL
+
+		 SELECT 6,'Inchiriat',39,1000 FROM dual
+UNION ALL
+
+		 SELECT 3,'Neinchiriat',50,1500 FROM dual
+UNION ALL
+
+		 SELECT 2,'Inchiriat',70,2000 FROM dual
+UNION ALL
+
+		 SELECT 5,'Neinchiriat',22,500 FROM dual
+UNION ALL
+
+		 SELECT 6,'Inchiriat',60,1800 FROM dual;
+SELECT * FROM Apartament;
+
+INSERT INTO utilitate(ID_Apartament, Tip_Utilitate)
+ SELECT 1,'Apa' FROM dual
+UNION ALL
+
+ 		 SELECT 1,'Gaze' FROM dual
+UNION ALL
+
+ 		 SELECT 1,'Electricitate' FROM dual
+UNION ALL
+
+		 SELECT 2,'Apa' FROM dual
+UNION ALL
+
+		 SELECT 2,'Electricitate' FROM dual
+UNION ALL
+
+		 SELECT 3,'Apa' FROM dual
+UNION ALL
+
+		 SELECT 3,'Gaze' FROM dual
+UNION ALL
+
+		 SELECT 3,'Electricitate' FROM dual
+UNION ALL
+
+		 SELECT 4,'Apa' FROM dual
+UNION ALL
+
+		 SELECT 4,'Gaze' FROM dual
+UNION ALL
+
+		 SELECT 5,'Apa' FROM dual
+UNION ALL
+
+		 SELECT 5,'Gaze' FROM dual
+UNION ALL
+
+		 SELECT 5,'Electricitate' FROM dual
+UNION ALL
+
+		 SELECT 6,'Gaze' FROM dual
+UNION ALL
+
+		 SELECT 6,'Electricitate' FROM dual;
+SELECT * FROM Utilitate;
+
+INSERT INTO camera(ID_Apartament, Tip_Camera, Nr_Geamuri, Tip_Pardoseala)
+ SELECT 1,'Dormitor',2,'Parchet' FROM dual
+UNION ALL
+
+		 SELECT 1,'Baie',1,'Faianta' FROM dual
+UNION ALL
+
+		 SELECT 1,'Hol',0,'Gresie' FROM dual
+UNION ALL
+
+		 SELECT 2,'Dormitor',1,'Parchet' FROM dual
+UNION ALL
+
+		 SELECT 2,'Baie',1,'Faianta' FROM dual
+UNION ALL
+
+		 SELECT 2,'Hol',0,'Gresie' FROM dual
+UNION ALL
+
+		 SELECT 2,'Bucatarie',2,'Gresie' FROM dual
+UNION ALL
+
+		 SELECT 3,'Dormitor',1,'Parchet' FROM dual
+UNION ALL
+
+		 SELECT 3,'Baie',2,'Faianta' FROM dual
+UNION ALL
+
+		 SELECT 3,'Hol',0,'Gresie' FROM dual
+UNION ALL
+
+		 SELECT 4,'Dormitor',2,'Parchet' FROM dual
+UNION ALL
+
+		 SELECT 4,'Baie',1,'Faianta' FROM dual
+UNION ALL
+
+		 SELECT 4,'Bucatarie',1,'Gresie' FROM dual
+UNION ALL
+
+		 SELECT 5,'Dormitor',1,'Parchet' FROM dual
+UNION ALL
+
+		 SELECT 5,'Baie',1,'Faianta' FROM dual
+UNION ALL
+
+		 SELECT 6,'Dormitor',2,'Parchet' FROM dual
+UNION ALL
+
+		 SELECT 6,'Baie',1,'Faianta' FROM dual;
+	SELECT * FROM camera;
+	
+INSERT INTO mobila(ID_Camera,Tip_Mobilier,Producator)
+ SELECT 1,'Dulap','IKEA' FROM dual
+UNION ALL
+
+		 SELECT 1,'Pat','DEDEMAN' FROM dual
+UNION ALL
+
+		 SELECT 1,'Noptiera','BRICOSTORE' FROM dual
+UNION ALL
+
+		 SELECT 2,'Chiuveta','DEDEMAN' FROM dual
+UNION ALL
+
+		 SELECT 2,'Cabina Dus','BRICODEPOT' FROM dual
+UNION ALL
+
+		 SELECT 2,'WC cu Bazin','LEROYMERLIN' FROM dual
+UNION ALL
+
+		 SELECT 3,'Cuier','MERLIN' FROM dual
+UNION ALL
+
+		 SELECT 4,'Dulap','DEDEMAN' FROM dual
+UNION ALL
+
+		 SELECT 4,'Pat','IKEA' FROM dual
+UNION ALL
+
+		 SELECT 4,'Noptiera','BRICOSTORE' FROM dual
+UNION ALL
+
+		 SELECT 5,'Chiuveta','DEDEMAN' FROM dual
+UNION ALL
+
+		 SELECT 5,'Cabina Dus','BRICODEPOT' FROM dual
+UNION ALL
+
+		 SELECT 5,'WC cu Bazin','LEROYMERLIN' FROM dual
+UNION ALL
+
+		 SELECT 6,'Cuier','MERLIN' FROM dual
+UNION ALL
+
+		 SELECT 6,'Dulap','IKEA' FROM dual
+UNION ALL
+
+		 SELECT 7,'Chiuveta','MERLIN' FROM dual
+UNION ALL
+
+		 SELECT 7,'Aragaz','PHILIPS' FROM dual
+UNION ALL
+
+		 SELECT 7,'Masa','LEMS' FROM dual
+UNION ALL
+
+		 SELECT 8,'Pat','LEMS' FROM dual
+UNION ALL
+
+		 SELECT 8,'Noptiera','LEMS' FROM dual
+UNION ALL
+
+		 SELECT 9,'Chiuveta','BRICODEPOT' FROM dual
+UNION ALL
+
+		 SELECT 9,'Cabina Dus','BRICODEPOT' FROM dual
+UNION ALL
+
+		 SELECT 9,'WC cu Bazin','BRICODEPOT' FROM dual
+UNION ALL
+
+		 SELECT 10,'Cuier','BRICODEPOT' FROM dual
+UNION ALL
+
+		 SELECT 11,'Dulap','IKEA' FROM dual
+UNION ALL
+
+		 SELECT 11,'Pat','IKEA' FROM dual
+UNION ALL
+
+		 SELECT 11,'Noptiera','IKEA' FROM dual
+UNION ALL
+
+		 SELECT 12,'Chiuveta','DEDEMAN' FROM dual
+UNION ALL
+
+		 SELECT 12,'Cabina Dus','LEROYMERLIN' FROM dual
+UNION ALL
+
+		 SELECT 12,'WC cu Bazin','LEROYMERLIN' FROM dual
+UNION ALL
+
+		 SELECT 13,'Chiuveta','MERLIN' FROM dual
+UNION ALL
+
+		 SELECT 13,'Aragaz','PHILIPS' FROM dual
+UNION ALL
+
+		 SELECT 13,'Masa','LEMS' FROM dual
+UNION ALL
+
+		 SELECT 14,'Dulap','MERLIN' FROM dual
+UNION ALL
+
+		 SELECT 14,'Pat','MERLIN' FROM dual
+UNION ALL
+
+		 SELECT 14,'Noptiera','MERLIN' FROM dual
+UNION ALL
+
+		 SELECT 15,'Chiuveta','DEDEMAN' FROM dual
+UNION ALL
+
+		 SELECT 15,'Cabina Dus','LEROYMERLIN' FROM dual
+UNION ALL
+
+		 SELECT 15,'WC cu Bazin','LEROYMERLIN' FROM dual
+UNION ALL
+
+		 SELECT 16,'Dulap','BRICOSTORE' FROM dual
+UNION ALL
+
+		 SELECT 16,'Pat','DEDEMAN' FROM dual
+UNION ALL
+
+		 SELECT 16,'Noptiera','BRICOSTORE' FROM dual
+UNION ALL
+
+		 SELECT 17,'Chiuveta','DEDEMAN' FROM dual
+UNION ALL
+
+		 SELECT 17,'Cabina Dus','BRICODEPOT' FROM dual
+UNION ALL
+
+		 SELECT 17,'WC cu Bazin','DEDEMAN' FROM dual;
+SELECT * FROM mobila;
+
+INSERT INTO chirias(ID_Apartament,Nume,Nr_Tel)
+ SELECT 1,'Florescu Daniel','0741568223' FROM dual
+UNION ALL
+
+		 SELECT 1,'Stoian Cornel','0734574252' FROM dual
+UNION ALL
+
+		 SELECT 2,'Gica Mihai','0755216632' FROM dual
+UNION ALL
+
+		 SELECT 4,'Barbu Stefan','0751211321' FROM dual
+UNION ALL
+
+		 SELECT 6,'Ghimbas Laurentiu','0763686866' FROM dual
+UNION ALL
+
+		 SELECT 6,'Bantoiu Cristian','0722765565' FROM dual;
+SELECT * FROM chirias;
+		
+INSERT INTO istoric_chirie(ID_Apartament,Pret_Anterior)
+ SELECT 1,800 FROM dual
+UNION ALL
+
+		 SELECT 1,870 FROM dual
+UNION ALL
+
+		 SELECT 2,360 FROM dual
+UNION ALL
+
+		 SELECT 3,700 FROM dual
+UNION ALL
+
+		 SELECT 3,780 FROM dual
+UNION ALL
+
+		 SELECT 4,1020 FROM dual
+UNION ALL
+
+		 SELECT 5,1590 FROM dual
+UNION ALL
+
+		 SELECT 5,1700 FROM dual
+UNION ALL
+
+		 SELECT 6,1100 FROM dual
+UNION ALL
+
+		 SELECT 6,1800 FROM dual;
+SELECT * FROM istoric_chirie;
+
+SELECT AVG(suprafata)
+FROM apartament;
+
+CREATE OR REPLACE VIEW camera4 ("ID_MOBILA", "ID_CAMERA", "TIP_MOBILIER", "PRODUCATOR") AS 
+  SELECT id_mobila, id_camera, tip_mobilier, producator
+FROM Mobila
+WHERE id_camera= 4;
+
+select * from camera4;	
+
+set serveroutput on
+BEGIN 
+DBMS_OUTPUT.put_line('Inchiriere apartamente');
+END;
