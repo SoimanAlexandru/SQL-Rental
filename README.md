@@ -1,2 +1,2 @@
 # SQL-Rental
-An apartament rental database.
+An apartment rental database.
